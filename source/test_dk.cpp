@@ -80,6 +80,7 @@ class DkTest final : public CApplication
     DemoData data;
     PerfGraph fps;
     float prevTime;
+    PadState pad;
 
 public:
     DkTest()
@@ -111,6 +112,9 @@ public:
         if (loadDemoData(vg, &this->data) == -1) {
             printf("Failed to load demo data!\n");
         }
+
+        padConfigureInput(1, HidNpadStyleSet_NpadStandard);
+        padInitializeDefault(&pad);
     }
 
     ~DkTest()
@@ -252,13 +256,14 @@ public:
 
     bool onFrame(u64 ns) override
     {
-        hidScanInput();
-        u64 kDown = hidKeysDown(CONTROLLER_P1_AUTO);
-        u64 kHeld = hidKeysHeld(CONTROLLER_P1_AUTO);
+        padUpdate(&pad);
+        u64 kDown = padGetButtonsDown(&pad);
         if (kDown & KEY_PLUS)
             return false;
 
-        render(ns, kHeld & KEY_MINUS);
+        // hidKeysHeld alternate not provided with libnx v4.0.0 +
+        // using kDown instead. Renders for a single frame when pressed
+        render(ns, kDown & KEY_MINUS);
         return true;
     }
 };

@@ -258,12 +258,12 @@ public:
     {
         padUpdate(&pad);
         u64 kDown = padGetButtonsDown(&pad);
-        if (kDown & KEY_PLUS)
+        if (kDown & HidNpadButton_Plus)
             return false;
 
         // hidKeysHeld alternate not provided with libnx v4.0.0 +
         // using kDown instead. Renders for a single frame when pressed
-        render(ns, kDown & KEY_MINUS);
+        render(ns, kDown & HidNpadButton_Minus);
         return true;
     }
 };
